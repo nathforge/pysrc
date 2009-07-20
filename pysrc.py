@@ -1,5 +1,17 @@
 #!/usr/bin/python
 
+"""
+Pysrc: Opens a Python module in a text editor.
+       Uses the $PYSRC_EDITOR variable as set in your environment, or
+       the --editor command-line option.
+
+e.g:
+    $ pysrc django.core.management --editor=cat
+    from django.dispatch import Signal
+
+    template_rendered = Signal(providing_args=["template", "context"])
+"""
+
 import imp
 import os
 import stat
