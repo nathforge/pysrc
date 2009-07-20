@@ -8,21 +8,19 @@ import sys
 import tempfile
 
 def get_module_path(module_name):
+    segments = module_name.split('.')
+    module_path = os.path.sep.join(segments[:-1])
+    last_module_name = segments[-1]
     for path in sys.path:
-        segments = module_name.split('.')
-        for i, segment in enumerate(segments):
-            last_segment = (i == len(segments) - 1)
-            segment_path = os.path.join(path, *segments[:i])
-            try:
-                module_file, pathname, (suffix, mode, module_type) = \
-                    imp.find_module(segment, [segment_path])
-            except ImportError:
-                break
-            else:
-                if last_segment:
-                    if module_type == imp.PKG_DIRECTORY:
-                        pathname = os.path.join(pathname, '__init__.py')
-                    return pathname
+        try:
+            module_file, pathname, (suffix, mode, module_type) = \
+                imp.find_module(last_module_name, [os.path.join(path, module_path)])
+        except ImportError:
+            pass
+        else:
+            if module_type == imp.PKG_DIRECTORY:
+                pathname = os.path.join(pathname, '__init__.py')
+            return pathname
 
 def get_module_source_from_hooks(module_name):
     for path in sys.path:
